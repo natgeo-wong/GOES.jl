@@ -1,6 +1,43 @@
-# GOES
+<p align="center">
+<img alt="GOES.jl Logo" src=https://raw.githubusercontent.com/natgeo-wong/GOES.jl/main/src/logosmall.png />
+</p>
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://natgeo-wong.github.io/GOES.jl/stable/)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://natgeo-wong.github.io/GOES.jl/dev/)
-[![Build Status](https://github.com/natgeo-wong/GOES.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/natgeo-wong/GOES.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![Coverage](https://codecov.io/gh/natgeo-wong/GOES.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/natgeo-wong/GOES.jl)
+# **<div align="center">GOES.jl</div>**
+
+<p align="center">
+  <a href="https://www.repostatus.org/#active">
+    <img alt="Repo Status" src="https://www.repostatus.org/badges/latest/active.svg?style=flat-square" />
+  </a>
+  <a href="https://github.com/natgeo-wong/GOES.jl/actions/workflows/CI.yml">
+    <img alt="GitHub Actions" src="https://github.com/natgeo-wong/GOES.jl/actions/workflows/CI.yml/badge.svg?branch=main&style=flat-square">
+  </a>
+  <br>
+  <a href="https://mit-license.org">
+    <img alt="MIT License" src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square">
+  </a>
+	<img alt="MIT License" src="https://img.shields.io/github/v/release/natgeo-wong/GOES.jl.svg?style=flat-square">
+  <a href="https://natgeo-wong.github.io/GOES.jl/stable/">
+    <img alt="Latest Documentation" src="https://img.shields.io/badge/docs-stable-blue.svg?style=flat-square">
+  </a>
+  <a href="https://natgeo-wong.github.io/GOES.jl/dev/">
+    <img alt="Latest Documentation" src="https://img.shields.io/badge/docs-latest-blue.svg?style=flat-square">
+  </a>
+</p>
+
+**Created By:** Nathanael Wong (n.wong@nyu.edu)
+
+## **Introduction**
+
+GOES.jl is a Julia package that aims to streamline the following process(es):
+* downloads of GOES (16-19) Datasets from Amazon Web Services
+* perform all the above operations innately over a given GeoRegion
+
+
+GOES.jl can be installed via
+```
+] add https://github.com/natgeo-wong/GOES.jl
+```
+
+## **Usage**
+
+Please refer to the [documentation](https://natgeo-wong.github.io/GOES.jl/dev/) for instructions and examples.
