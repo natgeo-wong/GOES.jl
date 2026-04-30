@@ -13,19 +13,24 @@ function goeslonlat(gds :: GOESDataset)
     elseif gds.sectorID == "M"
         error("$(modulelog()) - Coordinates for Mesoscale sectors are not uniquely defined and must be converted directly")
     end
-    fnc = joinpath(gds.mask,"goes_$(position)-$(sector).nc")
-    if !isfile(fnc); downloadgoeslonlat(gds,fnc) end
+    fzip = joinpath(gds.mask,"goes_$(position)-$(sector).zip")
+    fnc  = joinpath(gds.mask,"goes_$(position)-$(sector).nc")
+    if !isfile(fzip); downloadgoeslonlat(gds,fzip,fnc) end
     
     ds = NCDataset(fnc)
-    lon = ds["longitude"][:,:]
-    lat = ds["latitude"][:,:]
+    lon = nomissing(ds["longitude"][:,:],NaN)
+    lat = nomissing(ds["latitude"][:,:], NaN)
     close(ds)
 
-    return lon, lat
+    return lon,lat
 
 end
 
-function downloadgoeslonlat(gds :: GOESDataset, fnc :: AbstractString)
+function downloadgoeslonlat(
+    gds  :: GOESDataset, 
+    fzip :: AbstractString, 
+    fnc  :: AbstractString
+)
 
     if gds.satellite == 16 || gds.satellite == 19
         position = 19
@@ -39,7 +44,11 @@ function downloadgoeslonlat(gds :: GOESDataset, fnc :: AbstractString)
         sector = "full_disk"
     end
 
-    download("https://www.star.nesdis.noaa.gov/atmospheric-composition-training/documents/goes$(position)_abi_$(sector)_lat_lon.zip", fnc)
+    download("https://www.star.nesdis.noaa.gov/atmospheric-composition-training/documents/goes$(position)_abi_$(sector)_lat_lon.zip", fzip)
+
+    run(`unzip $fzip`); rm(fzip,force=true)
+
+    mv(joinpath(gds.mask,"goes$(position)_abi_$(sector)_lat_lon.nc"), fnc)
 
     return nothing
 
