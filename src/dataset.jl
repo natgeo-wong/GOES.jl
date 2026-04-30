@@ -38,7 +38,7 @@ function GOESDataset(;
     ID      :: Int,
     product :: ST,
     path    :: ST = goespath(homedir()),
-) where {ST <: AbstractString, DT<:TimeType}
+) where {ST <: AbstractString}
 
     checksatellite(ID)
 
@@ -48,7 +48,7 @@ function GOESDataset(;
     mask = joinpath(goespath(path),"mask")
     if !isdir(mask); mkpath(mask) end
 
-    return GOESDataset{ST,DT}(
+    return GOESDataset{ST,Date}(
         ID, product, path, mask,
         checksector(product), checksectorID(product),
         datestart(ID), datestop(ID)

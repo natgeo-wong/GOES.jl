@@ -10,7 +10,7 @@ import Base: show, read, download
 
 ## Modules Used
 using AWS
-using AWS3
+using AWSS3
 using PrettyTables
 
 ## Reexporting exported functions within these modules
