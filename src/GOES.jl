@@ -33,7 +33,7 @@ goespath(path) = splitpath(path)[end] !== "GOES" ? joinpath(path,"GOES") : path
 ## Including Relevant Files
 
 include("dataset.jl")
-include("download.jl")
+# include("download.jl")
 include("lonlat.jl")
 include("backend.jl")
 
