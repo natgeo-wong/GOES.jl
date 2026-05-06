@@ -42,11 +42,11 @@ function GOESDataset(;
 
     checksatellite(ID)
 
-    path = joinpath(goespath(path),product)
-    if !isdir(path); mkpath(path) end
-
     mask = joinpath(goespath(path),"mask")
     if !isdir(mask); mkpath(mask) end
+
+    path = joinpath(goespath(path),product)
+    if !isdir(path); mkpath(path) end
 
     return GOESDataset{ST,Date}(
         ID, product, path, mask,
@@ -63,10 +63,11 @@ function show(
 
     print(io,
 		"The GOES Dataset has the following properties:\n",
-		"    Satellite ID (satellite) : ", gds.ID, '\n',
+		"    Satellite ID (satellite) : ", gds.satellite, '\n',
 		"    Product ID     (product) : ", gds.product, '\n',
 		"    Product Sector  (sector) : ", gds.sector, '\n',
 		"    Directory         (path) : ", gds.path, '\n',
+		"    Mask Directory    (mask) : ", gds.mask, '\n',
 		"    Date Begin       (start) : ", gds.start, '\n',
 		"    Date End          (stop) : ", gds.stop , '\n',
 	)
@@ -77,7 +78,7 @@ end
 
 checksatellite(ID :: Int) = ID > 15 ? nothing : error("$(modulelog()) - Amazon Web Services does not provided GOES Data for satellites before GOES-16")
 
-checksectorID(product :: AbstractString) = product[end]
+checksectorID(product :: AbstractString) = string(product[end])
 
 function checksector(product :: AbstractString)
 
