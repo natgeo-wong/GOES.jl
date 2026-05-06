@@ -12,11 +12,13 @@ import Base: show, read, download
 using AWS
 using AWSS3
 using PrettyTables
+using RegionGrids
 
 ## Reexporting exported functions within these modules
 using Reexport
 @reexport using Dates
 @reexport using NCDatasets
+@reexport using GeoRegions
 
 ## Exporting the following functions:
 export

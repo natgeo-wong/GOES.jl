@@ -1,6 +1,6 @@
 function save(
 	data :: AbstractArray{Float32,3},
-	t    :: Vector{DateTime,1},
+	t    :: Vector{DateTime},
 	gvar :: String,
 	dt   :: TimeType,
 	gds  :: GOESDataset,
