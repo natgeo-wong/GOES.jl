@@ -20,8 +20,9 @@ function gdsfnc(
     ii  :: Int
 )
 
-    fol = joinpath(gds.path,gds.product,yrmo2dir(dt))
-    fnc = "GOES" * gds.ID * "-" * gds.product * "-" *
+    fol = joinpath(gds.path,yrmo2dir(dt))
+    if !isdir(fol); mkpath(fol) end
+    fnc = "GOES$(gds.satellite)" * "-" * gds.product * "-" *
           ymd2str(dt) * "T" * @sprintf("%02d",hr) * "-step" * @sprintf("%02d",ii) * ".nc"
     return joinpath(fol,fnc)
 
@@ -34,8 +35,9 @@ function gdsfnc(
     dt  :: TimeType
 )
 
-    fol = joinpath(gds.path,gds.product,geo.ID,yrmo2dir(dt))
-    fnc = "GOES" * gds.ID * "-" * geo.ID * "-" * gds.product * "-" * 
+    fol = joinpath(gds.path,geo.ID,yrmo2dir(dt))
+    if !isdir(fol); mkpath(fol) end
+    fnc = "GOES$(gds.satellite)" * "-" * gds.product * "-" * geo.ID * "-" * 
            var * "-" * ymd2str(dt) * ".nc"
     return joinpath(fol,fnc)
 

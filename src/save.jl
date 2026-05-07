@@ -1,5 +1,5 @@
 function save(
-	data :: AbstractArray{Float32,3},
+	data :: AbstractArray{NT,3},
 	t    :: Vector{DateTime},
 	gvar :: String,
 	dt   :: TimeType,
@@ -7,9 +7,9 @@ function save(
 	geo  :: GeoRegion,
 	ggrd :: RegionGrid,
 	dict :: Vector{Dict}
-)
+) where NT <: Real
 
-	@info "$(modulelog()) - Saving $(gds.name) data in the $(geo.name) GeoRegion for $(dt)"
+	@info "$(modulelog()) - Saving $(gds.product) data in the $(geo.name) GeoRegion for $(dt)"
 
 	fnc = gdsfnc(gds,geo,gvar,dt)
 	if !isdir(dirname(fnc)); mkpath(dirname(fnc)) end
@@ -19,12 +19,24 @@ function save(
 	end
 	@info "$(modulelog()) - Creating NetCDF file $(fnc) ..."
 	pds = NCDataset(fnc,"c",attrib = Dict(
-        "doi" => gds.doi
+        "naming_authority"     	 => "gov.nesdis.noaa",
+		"Conventions"          	 => "CF-1.7",
+		"Metadata_Conventions" 	 => "Unidata Dataset Discovery v1.0",
+		"standard_name_vocabulary" => "CF Standard Name Table (v35, 20 July 2016)",
+		"institution"          	 => "DOC/NOAA/NESDIS > U.S. Department of Commerce, National Oceanic and Atmospheric >Administration, National Environmental Satellite, Data, and Information Services>",
+		"project"              	 => "GOES",
+		"license"              	 => "Unclassified data.  Access is restricted to approved users only.",
+		"processing_level"     	 => "National Aeronautics and Space Administration (NASA) L2",
+		"production_data_source" => "Realtime"
     ))
 
-	pds.dim["longitude"] = size(ggrd.lon,1)
-	pds.dim["latitude"]  = size(ggrd.lat,2)
+	nlon,nlat = size(ggrd.lon)
+	pds.dim["longitude"] = nlon
+	pds.dim["latitude"]  = nlat
 	pds.dim["time"]      = 288
+
+	dict[1]["_FillValue"] = NT(dict[1]["_FillValue"])
+	dict[2]["units"] = "minutes since 2000-01-01 00:00:00"
 
 	nclon = defVar(pds,"longitude",Float32,("longitude","latitude"),attrib = Dict(
 	    "units"         => "degrees_east",
@@ -36,9 +48,8 @@ function save(
 	    "standard_name" => "latitude",
 	))
 
-	ncvar = defVar(pds,gvar,Float32,("longitude","latitude","time"),attrib = dict[1])
+	ncvar = defVar(pds,gvar,NT,("longitude","latitude","time"),chunksizes=(nlon,nlat,12),deflatelevel=5,attrib = dict[1])
 	
-	dict[2]["units"] = "minutes since $(dt) 00:00:00"
 	nct = defVar(pds,"time",Float64,("time",),attrib = dict[2])
 
 	nclon[:,:] = ggrd.lon
@@ -48,6 +59,6 @@ function save(
 
 	close(pds)
 
-	@info "$(modulelog()) - $(gds.name) data in the $(geo.name) GeoRegion for $(dt) has been saved into $(fnc)"
+	@info "$(modulelog()) - $(gds.product) data in the $(geo.name) GeoRegion for $(dt) has been saved into $(fnc)"
 
 end

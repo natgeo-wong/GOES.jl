@@ -27,26 +27,22 @@ function download(
 	@info "$(modulelog()) - Establishing AWS connection credentials and region ..."
 	aws = AWSConfig(; creds=nothing, region="us-east-1")
 
-	@info "$(modulelog()) - Downloading $(gds.name) data from $(gds.start) to $(gds.stop)"
+	@info "$(modulelog()) - Downloading GOES-$(gds.satellite) $(gds.product) data from $(gds.start) to $(gds.stop)"
 
 	for dt in start : Day(1) : stop
 
-		@info "$(modulelog()) - Downloading $(gds.product) data from the Amazon Web Servers ..."
-
 		yr = year(dt)
-		mo = month(dt)
-		dy = day(dt)
 		doy = dayofyear(dt)
 		
 		for hr = 0 : 23
 
-			prefix = "$product/$yr/$(@sprintf("%03d",doy))/$(@sprintf("%02d",hr))/"
+			prefix = "$(gds.product)/$yr/$(@sprintf("%03d",doy))/$(@sprintf("%02d",hr))/"
 
-			keys = s3_list_objects(aws, bucket, prefix)
+			keys = s3_list_objects(aws,gds.bucket,prefix)
 			for (ii, obj) in enumerate(keys)
 				fnc = gdsfnc(gds,dt,hr,ii)
 				if overwrite || !isfile(fnc)
-					s3_get_file(aws,bucket,obj["Key"],fnc)
+					s3_get_file(aws,gds.bucket,obj["Key"],fnc)
 				else
 					@info "$(modulelog()) - $(gds.product) data for $(dt)T$(hr)-step$(ii) exists in $(fnc), and we are not overwriting, skipping to next timestep ..."
 				end
@@ -85,16 +81,19 @@ function download(
 	gvar  :: String;
 	start :: Date = gds.start,
 	stop  :: Date = gds.stop,
-	overwrite :: Bool = false
+	overwrite :: Bool = false,
+	NT = Float32
 )
 
 	@info "$(modulelog()) - Establishing AWS connection credentials and region ..."
 	aws = AWSConfig(; creds=nothing, region="us-east-1")
 
-	@info "$(modulelog()) - Downloading $(gds.name) data from $(gds.start) to $(gds.stop)"
-	lon,lat = gdslonlat(gds); ntlon,ntlat = size(lon)
+	@info "$(modulelog()) - Downloading GOES-$(gds.satellite) $(gds.product) data from $(gds.start) to $(gds.stop)"
+	lon,lat = goeslonlat(gds); ntlon,ntlat = size(lon)
 	ggrd  = RegionGrid(geo,Point2.(lon,lat)); nlon,nlat = size(ggrd.lon)
-	tdata = zeros(Float32,ntlon,ntlat)
+	
+	@info "$(modulelog()) - Preallocating temporary and final data arrays ..."
+	tdata = zeros(NT,ntlon,ntlat)
 	vdata = zeros(Float32,nlon,nlat,288)
 	t     = zeros(DateTime,288)
 	vdict = Vector{Dict}(undef,2)
@@ -111,33 +110,38 @@ function download(
 			dy = dayofyear(dt)
 			for hr = 0 : 23
 
-				prefix = "$product/$yr/$(@sprintf("%03d",dy))/$(@sprintf("%02d",hr))/"
-				keys = s3_list_objects(aws,bucket,prefix)
-				for (ii, obj) in enumerate(keys)
+				prefix = "$(gds.product)/$yr/$(@sprintf("%03d",dy))/$(@sprintf("%02d",hr))/"
+				keys = s3_list_objects(aws,gds.bucket,prefix)
+				for obj in keys
 					jj += 1
-					s3_get_file(aws,bucket,obj["Key"],joinpath(gds.path,"tmp.nc"))
-					ds = NCDataset(joinpath(gds.path,"tmp.nc"))
-					NCDatasets.load!(ds[gvar].var[:,:],views(vdata,:,:,jj),:,:); vdict[1] = Dict(ds[gvar].attrib)
+					tfnc = joinpath(gds.path,"tmp-$(now()).nc")
+					s3_get_file(aws,gds.bucket,obj["Key"],tfnc)
+					ds = NCDataset(tfnc)
+					NCDatasets.load!(ds[gvar].var,tdata,:,:); vdict[1] = Dict(ds[gvar].attrib)
 					iit   = @view t[jj]; iit .= ds["t"][:]; vdict[2] = Dict(ds["t"].attrib)
-					extract!(iivar,tdata,ggrd)
+					extract!(view(vdata,:,:,jj),tdata,ggrd)
 					close(ds)
-					rm(joinpath(gds.path,"tmp.nc"),force=true)
+					rm(tfnc,force=true)
    			 	end
 			
 			end
 
+			flush(stderr)
+			if jj < 288
+				vdata[:,:,(jj+1):end] .= NaN
+				t[(jj+1):end] .= DateTime(2000,1,1,0,0,0)
+			end
+			if !iszero(jj)
+				save(vdata,t,gvar,dt,gds,geo,ggrd,vdict)
+			else
+				@info "$(modulelog()) - There is no $(gds.product) data for $(dt), skipping to next timestep ..."
+			end
+
 		else
 
-			@info "$(modulelog()) - $(gds.product) data for $(dt)T$(hr)-step$(ii) exists in $(fnc), and we are not overwriting, skipping to next timestep ..."
+			@info "$(modulelog()) - $(gds.product) data for $(dt) exists in $(fnc), and we are not overwriting, skipping to next timestep ..."
 
 		end
-
-		flush(stderr)
-		if jj < 288
-			vdata[:,:,(jj+1):end] .= NaN
-			t[(jj+1):end] .= DateTime(1900,1,1,0,0,0)
-		end
-		save(vdata,t,gvar,dt,gds,geo,ggrd,vdict)
 
 	end
 

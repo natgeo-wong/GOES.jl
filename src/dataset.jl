@@ -9,6 +9,7 @@ Specifies an GOES (Geostationary Operational Environmental Satellite) dataset wi
 """
 struct GOESDataset{ST<:AbstractString, DT<:TimeType}
     satellite :: Int
+    bucket    :: ST
     product   :: ST
     path      :: ST
     mask      :: ST
@@ -49,7 +50,7 @@ function GOESDataset(;
     if !isdir(path); mkpath(path) end
 
     return GOESDataset{ST,Date}(
-        ID, product, path, mask,
+        ID, "noaa-goes$ID",product, path, mask,
         checksector(product), checksectorID(product),
         datestart(ID), datestop(ID)
     )
@@ -64,6 +65,7 @@ function show(
     print(io,
 		"The GOES Dataset has the following properties:\n",
 		"    Satellite ID (satellite) : ", gds.satellite, '\n',
+		"    Bucket          (bucket) : ", gds.bucket, '\n',
 		"    Product ID     (product) : ", gds.product, '\n',
 		"    Product Sector  (sector) : ", gds.sector, '\n',
 		"    Directory         (path) : ", gds.path, '\n',
