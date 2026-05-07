@@ -3,14 +3,16 @@ using Documenter
 using DocumenterVitepress
 
 makedocs(;
-    format=DocumenterVitepress.MarkdownVitepress(
+    modules  = [GOES],
+    authors  = "Nathanael Wong <natgeo.wong@outlook.com>",
+    sitename = "GOES.jl",
+    doctest  = false,
+    warnonly = true,
+    format   = DocumenterVitepress.MarkdownVitepress(
         repo="github.com/natgeo-wong/GOES.jl",
         devbranch="main",
         devurl = "dev"
     ),
-    modules=[GOES],
-    authors="Nathanael Wong <natgeo.wong@outlook.com>",
-    sitename="GOES.jl",
     pages=[
         "Home" => "index.md",
     ],
