@@ -24,7 +24,7 @@ using Reexport
 export
         GOESDataset,
         
-        download, read
+        download, read, grid
 
 ## GOES.jl setup and logging preface
 
@@ -35,7 +35,7 @@ goespath(path) = splitpath(path)[end] !== "GOES" ? joinpath(path,"GOES") : path
 ## Including Relevant Files
 
 include("dataset.jl")
-include("lonlat.jl")
+include("grid.jl")
 include("download.jl")
 include("filesystem.jl")
 include("save.jl")

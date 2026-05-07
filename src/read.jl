@@ -1,23 +1,24 @@
 """
     read(
-        npd :: NASAPrecipitationDataset,
-        geo :: GeoRegion,
-        dt  :: TimeType;
-        lonlat :: Bool = false
-    ) -> NCDataset           (if lonlat = false)
-      -> lon, lat, NCDataset (if lonlat = true)
+        gds :: GOESDataset,
+        dt  :: TimeType,
+        hr  :: Int,
+        ii  :: Int;
+        quiet :: Bool = true
+    ) -> NCDataset
 
-Reads a NASA Precipitation dataset specified by `npd` for a GeoRegion specified by `geo` at a date specified by `dt`.
+Reads a GOES dataset specified by `gds` for a GeoRegion specified by `geo` at a date specified by Date `dt`, Hour `$hr` and Step `$ii` (roughly every 5 minutes).
 
 Arguments
 =========
-- `e5ds` : a `NASAPrecipitationDataset` specifying the dataset details and date download range
-- `ereg` : a `GeoRegion` (see [GeoRegions.jl](https://github.com/JuliaClimate/GeoRegions.jl)) that sets the geographic bounds of the data array in lon-lat
-- `dt`   : A specified date. The NCDataset retrieved may will contain data for the date, although it may also contain data for other dates depending on the `NASAPrecipitationDataset` specified by `npd`
+- `gds` : a `GOESDataset` specifying the dataset details and date download range
+- `dt`  : A specified date.
+- `hr`  : The hour (in the date) for which to retrieve data.
+- `ii`  : The step (in the hour) for which to retrieve data (roughly every 5 minutes).
 
 Keyword Arguments
 =================
-- `lonlat` : if `true`, then return the longitude and latitude vectors for the dataset. Otherwise only the NCDataset type will be returned.
+- `quiet` : if `true`, then suppress logging output. Otherwise, logging output will be displayed.
 """
 function read(
 	gds :: GOESDataset,
@@ -50,11 +51,33 @@ function read(
 
 end
 
+"""
+    read(
+        gds :: GOESDataset,
+        geo :: GeoRegion,
+        var :: String,
+        dt  :: TimeType;
+        quiet :: Bool = true
+    ) -> NCDataset
+
+Reads a GOES dataset specified by `gds` for a GeoRegion specified by `geo` at a date specified by Date `dt`, Hour `$hr` and Step `$ii` (roughly every 5 minutes).
+
+Arguments
+=========
+- `gds` : a `GOESDataset` specifying the dataset details and date download range
+- `geo` : a `GeoRegion` specifying the geographic region for which to retrieve data
+- `var` : a `String` specifying the variable to retrieve
+- `dt`  : a `TimeType` specifying the date for which to retrieve data
+
+Keyword Arguments
+=================
+- `quiet` : if `true`, then suppress logging output. Otherwise, logging output will be displayed.
+"""
 function read(
 	gds :: GOESDataset,
 	geo :: GeoRegion,
     var :: String,
-    dt  :: TimeType,
+    dt  :: TimeType;
     quiet :: Bool = true
 )
 

@@ -1,4 +1,4 @@
-function goeslonlat(gds :: GOESDataset)
+function grid(gds :: GOESDataset)
 
     if gds.satellite == 16 || gds.satellite == 19
         position = "east"
@@ -15,7 +15,7 @@ function goeslonlat(gds :: GOESDataset)
     end
     fzip = joinpath(gds.mask,"goes_$(position)-$(sector).zip")
     fnc  = joinpath(gds.mask,"goes_$(position)-$(sector).nc")
-    if !isfile(fnc); downloadgoeslonlat(gds,fzip,fnc) end
+    if !isfile(fnc); downloadgrid(gds,fzip,fnc) end
     
     ds = NCDataset(fnc)
     lon = nomissing(ds["longitude"][:,:],NaN)
@@ -26,7 +26,7 @@ function goeslonlat(gds :: GOESDataset)
 
 end
 
-function downloadgoeslonlat(
+function downloadgrid(
     gds  :: GOESDataset, 
     fzip :: AbstractString, 
     fnc  :: AbstractString

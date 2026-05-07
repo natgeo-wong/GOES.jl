@@ -2,10 +2,15 @@
     GOESDataset{ST<:AbstractString, DT<:TimeType}
 
 Specifies an GOES (Geostationary Operational Environmental Satellite) dataset with the following fields:
-* `stream` - The GOES datastream name (e.g., `"sgpmetE13.b1"`).
-* `start` - The start date for the data query.
-* `stop` - The end date for the data query.
-* `path` - The local directory path where data will be stored.
+* `satellite` : An `Int` specifying the satellite ID (valid satellites are GOES 16-19)
+* `bucket`    : An `AbstractString` specifying the S3 bucket name (derived from the satellite ID)
+* `product`   : An `AbstractString` specifying the product name
+* `path`      : An `AbstractString` specifying the local directory path where data will be stored
+* `mask`      : An `AbstractString` specifying the directory path for storing lon/lat mask files
+* `sector`    : An `AbstractString` specifying the sector name
+* `sectorID`  : An `AbstractString` specifying the sector ID
+* `start`     : An `TimeType` specifying the default start date for the data query
+* `stop`      : An `TimeType` specifying the default end date for the data query
 """
 struct GOESDataset{ST<:AbstractString, DT<:TimeType}
     satellite :: Int
@@ -21,19 +26,18 @@ end
 
 """
     GOESDataset(; stream :: ST,
-        start  :: DT,
-        stop   :: DT,
-        path   :: ST = armpath(homedir())
-    ) where {ST <: AbstractString, DT<:TimeType} -> GOESDataset{ST,DT}
+        ID      :: Int,
+        product :: ST,
+        path    :: ST = goespath(homedir()),
+    ) where {ST <: AbstractString} -> GOESDataset{ST,DT}
 
 Create an `GOESDataset` specification for querying and downloading GOES data.
 
 Keyword Arguments
 =================
-* `stream` - The GOES datastream name (e.g., `"sgpmetE13.b1"`).
-* `start` - The start date for the data query.
-* `stop` - The end date for the data query.
-* `path` - The root directory for storing data, default is `homedir()`.
+* `ID`      : An `Int` specifying the satellite ID (valid satellites are GOES 16-19)
+* `product` : An `AbstractString` specifying the product name
+* `path`    : An `AbstractString` specifying the data directory path where downloaded data will be, with the default given by `goespath(homedir())`
 """
 function GOESDataset(;
     ID      :: Int,

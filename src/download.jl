@@ -1,20 +1,23 @@
 """
     download(
-        gds :: GOESDataset;
+        gds   :: GOESDataset;
 		start :: Date = gds.start,
 		stop  :: Date = gds.stop,
 	    overwrite :: Bool = false
     ) -> nothing
 
-Downloads a NASA Precipitation dataset specified by `btd` for a GeoRegion specified by `geo`
+Downloads a GOES dataset specified by `gds`. All available variables and data in the dataset will be downloaded (the file will be renamed according to GOES.jl filename conventions).
+
+For the option to subset only specific variables of interest, see the other `download()` method function.
 
 Arguments
 =========
-- `btd` : a `NASAPrecipitationDataset` specifying the dataset details and date download range
-- `geo` : a `GeoRegion` (see [GeoRegions.jl](https://github.com/JuliaClimate/GeoRegions.jl)) that sets the geographic bounds of the data array in lon-lat
+- `gds` : A `GOESDataset` specifying the dataset details and default date download range (which can be overridden by the `start` and `stop` keyword arguments)
 
 Keyword Arguments
 =================
+- `start` : A `Date` specifying the start date for the data query
+- `stop` : A `Date` specifying the end date for the data query
 - `overwrite` : If `true`, overwrite any existing files
 """
 function download(
@@ -59,22 +62,26 @@ end
 
 """
     download(
-        gds :: GOESDataset;
+        gds   :: GOESDataset;
 		start :: Date = gds.start,
 		stop  :: Date = gds.stop,
 	    overwrite :: Bool = false
     ) -> nothing
 
-Downloads a NASA Precipitation dataset specified by `btd` for a GeoRegion specified by `geo`
+Downloads a GOES dataset specified by `gds` for a GeoRegion specified by `geo` and variable specified by `gvar`. This method also allows for data compression in chunks for NetCDF in order to save disk space where possible, and compiles data for every individual day.
 
 Arguments
 =========
-- `btd` : a `NASAPrecipitationDataset` specifying the dataset details and date download range
-- `geo` : a `GeoRegion` (see [GeoRegions.jl](https://github.com/JuliaClimate/GeoRegions.jl)) that sets the geographic bounds of the data array in lon-lat
+- `gds` : A `GOESDataset` specifying the dataset details and default date download range (which can be overridden by the `start` and `stop` keyword arguments)
+- `geo` : A `GeoRegion` specifying the geographic region for which to retrieve data
+- `gvar` : A `String` specifying the variable of interest to retrieve
 
 Keyword Arguments
 =================
+- `start` : A `Date` specifying the start date for the data query
+- `stop` : A `Date` specifying the end date for the data query
 - `overwrite` : If `true`, overwrite any existing files
+- `NT` : The data type for `gvar`
 """
 function download(
 	gds   :: GOESDataset,
@@ -90,7 +97,7 @@ function download(
 	aws = AWSConfig(; creds=nothing, region="us-east-1")
 
 	@info "$(modulelog()) - Downloading GOES-$(gds.satellite) $(gds.product) data from $(gds.start) to $(gds.stop)"
-	lon,lat = goeslonlat(gds); ntlon,ntlat = size(lon)
+	lon,lat = grid(gds); ntlon,ntlat = size(lon)
 	ggrd  = RegionGrid(geo,Point2.(lon,lat)); nlon,nlat = size(ggrd.lon)
 	
 	@info "$(modulelog()) - Preallocating temporary and final data arrays ..."
