@@ -41,6 +41,7 @@ function download(
 			keys = s3_list_objects(aws,gds.bucket,prefix)
 			for (ii, obj) in enumerate(keys)
 				fnc = gdsfnc(gds,dt,hr,ii)
+				fol = dirname(fnc); if !isdir(fol); mkpath(fol) end
 				if overwrite || !isfile(fnc)
 					s3_get_file(aws,gds.bucket,obj["Key"],fnc)
 				else
@@ -103,8 +104,6 @@ function download(
 		fnc = gdsfnc(gds,geo,gvar,dt)
 		jj = 0
 		if overwrite || !isfile(fnc)
-
-			@info "$(modulelog()) - Downloading $(gds.product) data from the Amazon Web Servers ..."
 
 			yr = year(dt)
 			dy = dayofyear(dt)
