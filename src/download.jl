@@ -113,7 +113,7 @@ function download(
 				keys = s3_list_objects(aws,gds.bucket,prefix)
 				for obj in keys
 					jj += 1
-					tfnc = joinpath(gds.path,"tmp-$(now()).nc")
+					tfnc = joinpath(gds.path,"tmp-$yr-$dy.nc")
 					s3_get_file(aws,gds.bucket,obj["Key"],tfnc)
 					ds = NCDataset(tfnc)
 					NCDatasets.load!(ds[gvar].var,tdata,:,:); vdict[1] = Dict(ds[gvar].attrib)
