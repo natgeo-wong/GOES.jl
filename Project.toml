@@ -1,6 +1,6 @@
 name = "GOES"
 uuid = "bad11bc4-67e9-4288-85cb-de767d6e4463"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["Nathanael Wong <natgeo.wong@outlook.com>"]
 
 [deps]
