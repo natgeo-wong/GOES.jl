@@ -1,23 +1,26 @@
 using GOES
 using Documenter
-
-DocMeta.setdocmeta!(GOES, :DocTestSetup, :(using GOES); recursive=true)
+using DocumenterVitepress
 
 makedocs(;
+    format=DocumenterVitepress.MarkdownVitepress(
+        repo="github.com/natgeo-wong/GOES.jl",
+        devbranch="main",
+        devurl = "dev"
+    ),
     modules=[GOES],
     authors="Nathanael Wong <natgeo.wong@outlook.com>",
     sitename="GOES.jl",
-    format=Documenter.HTML(;
-        canonical="https://natgeo-wong.github.io/GOES.jl",
-        edit_link="main",
-        assets=String[],
-    ),
     pages=[
         "Home" => "index.md",
     ],
 )
+# and for deploying use
 
-deploydocs(;
+DocumenterVitepress.deploydocs(;
     repo="github.com/natgeo-wong/GOES.jl",
+    target = joinpath(@__DIR__, "build"),
+    branch = "gh-pages",
     devbranch="main",
+    push_preview = true,
 )
