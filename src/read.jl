@@ -18,6 +18,7 @@ Arguments
 
 Keyword Arguments
 =================
+- `throw` : if `true`, then throw an error if the dataset does not exist. Otherwise, return `nothing`.
 - `quiet` : if `true`, then suppress logging output. Otherwise, logging output will be displayed.
 """
 function read(
@@ -25,18 +26,24 @@ function read(
 	dt  :: TimeType,
     hr  :: Int,
     ii  :: Int;
+    throw :: Bool = true,
     quiet :: Bool = true
 )
 
     fnc = gdsfnc(gds,dt,hr,ii)
 
     if quiet
-        disable_logging(Logging.Warn)
+        disable_logging(Logging.Info)
     end
 
     
     if !isfile(fnc)
-        error("$(modulelog()) - The $(gds.product) Dataset during Date $dt, Hour $hr and Step $ii does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here")
+        if throw
+            error("$(modulelog()) - The $(gds.product) Dataset during Date $dt, Hour $hr and Step $ii does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here")
+        else
+            @warn "$(modulelog()) - The $(gds.product) Dataset during Date $dt, Hour $hr and Step $ii does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here"
+            return nothing
+        end
     end
     @info "$(modulelog()) - Opening the $(gds.product) NCDataset during Date $dt, Hour $hr and Step $ii"
     
@@ -71,6 +78,7 @@ Arguments
 
 Keyword Arguments
 =================
+- `throw` : if `true`, then throw an error if the dataset does not exist. Otherwise, return `nothing`.
 - `quiet` : if `true`, then suppress logging output. Otherwise, logging output will be displayed.
 """
 function read(
@@ -78,18 +86,24 @@ function read(
 	geo :: GeoRegion,
     var :: String,
     dt  :: TimeType;
+    throw :: Bool = true,
     quiet :: Bool = true
 )
 
     fnc = gdsfnc(gds,geo,var,dt)
 
     if quiet
-        disable_logging(Logging.Warn)
+        disable_logging(Logging.Info)
     end
 
     
     if !isfile(fnc)
-        error("$(modulelog()) - The $(gds.product) Dataset during Date $dt, Hour $hr and Step $ii does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here")
+        if throw
+            error("$(modulelog()) - The $(gds.product) Dataset during Date $dt, Hour $hr and Step $ii does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here")
+        else
+            @warn "$(modulelog()) - The $(gds.product) Dataset during Date $dt, Hour $hr and Step $ii does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here"
+            return nothing
+        end
     end
     @info "$(modulelog()) - Opening the $(gds.product) NCDataset during Date $dt, Hour $hr and Step $ii"
     
