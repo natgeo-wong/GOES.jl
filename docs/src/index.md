@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: "GOES.jl"
-  text: "Managing GOES Datasets"
-  tagline: Download, and manipulate datasets from the Geostationary Operational Environmental Satellites in Julia.
+  text: "Managing GOES Datasets in Julia"
+  tagline: Download and manipulate datasets from the Geostationary Operational Environmental Satellites.
   image:
     src: /logo.png
     alt: GOES
