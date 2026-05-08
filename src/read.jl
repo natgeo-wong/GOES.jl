@@ -7,7 +7,7 @@
         quiet :: Bool = true
     ) -> NCDataset
 
-Reads a GOES dataset specified by `gds` for a GeoRegion specified by `geo` at a date specified by Date `dt`, Hour `$hr` and Step `$ii` (roughly every 5 minutes).
+Reads a GOES dataset specified by `gds` for a GeoRegion specified by `geo` at a date specified by Date `dt`, Hour `hr` and Step `ii` (roughly every 5 minutes).
 
 Arguments
 =========
@@ -67,7 +67,7 @@ end
         quiet :: Bool = true
     ) -> NCDataset
 
-Reads a GOES dataset specified by `gds` for a GeoRegion specified by `geo` at a date specified by Date `dt`, Hour `$hr` and Step `$ii` (roughly every 5 minutes).
+Reads a GOES dataset specified by `gds` for a variable `var` in a GeoRegion specified by `geo` at a date specified by Date `dt`.
 
 Arguments
 =========
@@ -99,13 +99,13 @@ function read(
     
     if !isfile(fnc)
         if throw
-            error("$(modulelog()) - The $(gds.product) Dataset during Date $dt, Hour $hr and Step $ii does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here")
+            error("$(modulelog()) - The $(gds.product) Dataset for $(var) in the $(geo.ID) GeoRegion at Date $dt does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here")
         else
-            @warn "$(modulelog()) - The $(gds.product) Dataset during Date $dt, Hour $hr and Step $ii does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here"
+            @warn "$(modulelog()) - The $(gds.product) Dataset for $(var) in the $(geo.ID) GeoRegion at Date $dt does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here"
             return nothing
         end
     end
-    @info "$(modulelog()) - Opening the $(gds.product) NCDataset during Date $dt, Hour $hr and Step $ii"
+    @info "$(modulelog()) - Opening the $(gds.product) NCDataset for $(var) in the $(geo.ID) GeoRegion at Date $dt"
     
 
     if quiet
