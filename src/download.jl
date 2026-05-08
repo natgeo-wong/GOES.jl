@@ -48,7 +48,7 @@ function download(
 				if overwrite || !isfile(fnc)
 					s3_get_file(aws,gds.bucket,obj["Key"],fnc)
 				else
-					@info "$(modulelog()) - $(gds.product) data for $(dt)T$(hr)-step$(ii) exists in $(fnc), and we are not overwriting, skipping to next timestep ..."
+					@info "$(modulelog()) - GOES-$(gds.satellite) $(gds.product) data for $(dt)T$(hr)-step$(ii) exists in $(fnc), and we are not overwriting, skipping to next timestep ..."
 				end
 			end
 		
@@ -96,7 +96,7 @@ function download(
 	@info "$(modulelog()) - Establishing AWS connection credentials and region ..."
 	aws = AWSConfig(; creds=nothing, region="us-east-1")
 
-	@info "$(modulelog()) - Downloading GOES-$(gds.satellite) $(gds.product) data from $(gds.start) to $(gds.stop)"
+	@info "$(modulelog()) - Downloading GOES-$(gds.satellite) $(gds.product) data for $(gvar) in the $(geo.name) GeoRegion from $(start) to $(stop)"
 	lon,lat = grid(gds); ntlon,ntlat = size(lon)
 	ggrd  = RegionGrid(geo,Point2.(lon,lat)); nlon,nlat = size(ggrd.lon)
 	
@@ -140,12 +140,12 @@ function download(
 			if !iszero(jj)
 				save(vdata,t,gvar,dt,gds,geo,ggrd,vdict)
 			else
-				@info "$(modulelog()) - There is no $(gds.product) data for $(dt), skipping to next timestep ..."
+				@info "$(modulelog()) - There is no GOES-$(gds.satellite) $(gds.product) data for $(gvar) in the $(geo.name) GeoRegion during $(dt), skipping to next timestep ..."
 			end
 
 		else
 
-			@info "$(modulelog()) - $(gds.product) data for $(dt) exists in $(fnc), and we are not overwriting, skipping to next timestep ..."
+			@info "$(modulelog()) - GOES-$(gds.satellite) $(gds.product) data for $(gvar) in the $(geo.name) GeoRegion during $(dt) exists in $(fnc), and we are not overwriting, skipping to next timestep ..."
 
 		end
 

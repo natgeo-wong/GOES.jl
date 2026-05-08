@@ -9,7 +9,7 @@ function save(
 	dict :: Vector{Dict}
 ) where NT <: Real
 
-	@info "$(modulelog()) - Saving $(gds.product) data in the $(geo.name) GeoRegion for $(dt)"
+	@info "$(modulelog()) - Saving GOES-$(gds.satellite) $(gds.product) data for $(gvar) in the $(geo.name) GeoRegion during $(dt)"
 
 	fnc = gdsfnc(gds,geo,gvar,dt)
 	if !isdir(dirname(fnc)); mkpath(dirname(fnc)) end
@@ -59,6 +59,6 @@ function save(
 
 	close(pds)
 
-	@info "$(modulelog()) - $(gds.product) data in the $(geo.name) GeoRegion for $(dt) has been saved into $(fnc)"
+	@info "$(modulelog()) - GOES-$(gds.satellite) $(gds.product) data for $(gvar) in the $(geo.name) GeoRegion during $(dt) has been saved into $(fnc)"
 
 end

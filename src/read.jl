@@ -4,6 +4,7 @@
         dt  :: TimeType,
         hr  :: Int,
         ii  :: Int;
+        throw :: Bool = true,
         quiet :: Bool = true
     ) -> NCDataset
 
@@ -39,9 +40,9 @@ function read(
     
     if !isfile(fnc)
         if throw
-            error("$(modulelog()) - The $(gds.product) Dataset during Date $dt, Hour $hr and Step $ii does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here")
+            error("$(modulelog()) - The GOES-$(gds.satellite) $(gds.product) Dataset during Date $dt, Hour $hr and Step $ii does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here")
         else
-            @warn "$(modulelog()) - The $(gds.product) Dataset during Date $dt, Hour $hr and Step $ii does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here"
+            @warn "$(modulelog()) - The GOES-$(gds.satellite) $(gds.product) Dataset during Date $dt, Hour $hr and Step $ii does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here"
             return nothing
         end
     end
@@ -64,6 +65,7 @@ end
         geo :: GeoRegion,
         var :: String,
         dt  :: TimeType;
+        throw :: Bool = true,
         quiet :: Bool = true
     ) -> NCDataset
 
@@ -99,13 +101,13 @@ function read(
     
     if !isfile(fnc)
         if throw
-            error("$(modulelog()) - The $(gds.product) Dataset for $(var) in the $(geo.ID) GeoRegion at Date $dt does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here")
+            error("$(modulelog()) - The GOES-$(gds.satellite) $(gds.product) Dataset for $(var) in the $(geo.ID) GeoRegion during Date $dt does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here")
         else
-            @warn "$(modulelog()) - The $(gds.product) Dataset for $(var) in the $(geo.ID) GeoRegion at Date $dt does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here"
+            @warn "$(modulelog()) - The GOES-$(gds.satellite) $(gds.product) Dataset for $(var) in the $(geo.ID) GeoRegion during Date $dt does not exist at $(fnc).  Check if files exist at $(gds.path) or download the files here"
             return nothing
         end
     end
-    @info "$(modulelog()) - Opening the $(gds.product) NCDataset for $(var) in the $(geo.ID) GeoRegion at Date $dt"
+    @info "$(modulelog()) - Opening the GOES-$(gds.satellite) $(gds.product) Dataset for $(var) in the $(geo.ID) GeoRegion during Date $dt"
     
 
     if quiet
