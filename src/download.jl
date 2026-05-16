@@ -30,7 +30,7 @@ function download(
 	@info "$(modulelog()) - Establishing AWS connection credentials and region ..."
 	aws = AWSConfig(; creds=nothing, region="us-east-1")
 
-	@info "$(modulelog()) - Downloading GOES-$(gds.satellite) $(gds.product) data from $(gds.start) to $(gds.stop)"
+	@info "$(modulelog()) - Downloading GOES-$(gds.satellite) $(gds.product) data from $(start) to $(stop)"
 
 	for dt in start : Day(1) : stop
 
