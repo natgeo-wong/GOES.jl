@@ -1,4 +1,4 @@
-module GOES
+module GOESatellites
 
 ## Base Modules Used
 using DelimitedFiles
@@ -7,6 +7,7 @@ using Printf
 using Statistics
 
 import Base: show, read, download
+import RegionGrids: nearest
 
 ## Modules Used
 using AWS
@@ -23,8 +24,16 @@ using Reexport
 ## Exporting the following functions:
 export
         GOESDataset,
-        
-        download, read, grid
+
+        download, read, grid,
+        nearest,
+
+        tableGOESDatasets, tableGOESVariables, tableGOESSatellites
+
+## Abstract Types
+
+abstract type GOESDataset end
+abstract type GOESVariable end
 
 ## GOES.jl setup and logging preface
 
@@ -41,5 +50,6 @@ include("save.jl")
 include("read.jl")
 include("filesystem.jl")
 include("backend.jl")
+include("tables.jl")
 
 end
